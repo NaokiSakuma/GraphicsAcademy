@@ -20,3 +20,9 @@ Unity 2021.2.9f1
 * [スプライトアニメーションの作成1](https://github.com/NaokiSakuma/GraphicsAcademy/tree/main/Assets/Day2/Practice4)
 * [スプライトアニメーションの作成2](https://github.com/NaokiSakuma/GraphicsAcademy/tree/main/Assets/Day2/Practice5)
 * [Unity UI用に加算シェーダーを作成](https://github.com/NaokiSakuma/GraphicsAcademy/tree/main/Assets/Day2/Practice6)
+
+## Day3
+
+* [ライティングの基本シェーダーの作成](https://github.com/NaokiSakuma/GraphicsAcademy/tree/main/Assets/Day3/Practice1)
+* [Toonシェーダーの作成](https://github.com/NaokiSakuma/GraphicsAcademy/tree/main/Assets/Day3/Practice2)
+* [様々なテクスチャ対応](https://github.com/NaokiSakuma/GraphicsAcademy/tree/main/Assets/Day3/Practice3)
