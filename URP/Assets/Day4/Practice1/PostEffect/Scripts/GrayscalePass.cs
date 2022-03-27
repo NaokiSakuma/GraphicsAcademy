@@ -7,11 +7,10 @@ namespace Day4.Practice1.PostEffect
     public class GrayscalePass: ScriptableRenderPass
     {
         private const string ProfilerTag = nameof(GrayscalePass);
-        private const string ProfilingSamplerName = "SrcToDest";
 
         private readonly Material material;
-        private readonly ProfilingSampler profilingSampler;
 
+        // 描画対象をハンドリングする
         private RenderTargetHandle tmpRenderTargetHandle;
         private RenderTargetIdentifier cameraColorTarget;
 
@@ -19,7 +18,6 @@ namespace Day4.Practice1.PostEffect
         {
             material = CoreUtils.CreateEngineMaterial(shader);
             renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
-            profilingSampler = new ProfilingSampler(ProfilingSamplerName);
             tmpRenderTargetHandle.Init("_TempRT");
         }
 
@@ -30,28 +28,24 @@ namespace Day4.Practice1.PostEffect
 
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
-            // いる？
             if (renderingData.cameraData.isSceneViewCamera)
             {
                 return;
             }
 
+            // コマンドバッファの生成
             var cmd = CommandBufferPool.Get(ProfilerTag);
 
-            // ?
+            // RenderTextureDescriptorの取得
             var descriptor = renderingData.cameraData.cameraTargetDescriptor;
+            // 今回深度は不要なので0に
             descriptor.depthBufferBits = 0;
 
             cmd.GetTemporaryRT(tmpRenderTargetHandle.id, descriptor);
-
-            // これいらんかも？
-            using (new ProfilingScope(cmd, profilingSampler))
-            {
-                cmd.Blit(cameraColorTarget, tmpRenderTargetHandle.Identifier(), material);
-            }
-
+            cmd.Blit(cameraColorTarget, tmpRenderTargetHandle.Identifier(), material);
             cmd.Blit(tmpRenderTargetHandle.Identifier(), cameraColorTarget);
             cmd.ReleaseTemporaryRT(tmpRenderTargetHandle.id);
+
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
         }

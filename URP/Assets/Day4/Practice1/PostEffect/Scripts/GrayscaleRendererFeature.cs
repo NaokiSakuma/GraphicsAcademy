@@ -10,11 +10,13 @@ namespace Day4.Practice1.PostEffect
 
         private GrayscalePass grayscalePass;
 
+        // 初期化
         public override void Create()
         {
             grayscalePass = new GrayscalePass(shader);
         }
 
+        // 1つ、または複数のパスを追加する
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
             grayscalePass.SetRenderTarget(renderer.cameraColorTarget);
