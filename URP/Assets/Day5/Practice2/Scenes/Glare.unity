@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 1404521}
   - component: {fileID: 1404520}
   m_Layer: 0
-  m_Name: Sphere (1)
+  m_Name: Blue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -348,7 +348,7 @@ GameObject:
   - component: {fileID: 394836682}
   - component: {fileID: 394836681}
   m_Layer: 0
-  m_Name: Sphere (2)
+  m_Name: Green
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -444,7 +444,6 @@ GameObject:
   - component: {fileID: 961739752}
   - component: {fileID: 961739751}
   - component: {fileID: 961739750}
-  - component: {fileID: 961739754}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -469,7 +468,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: -1
+  m_RendererIndex: 2
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -551,22 +550,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &961739754
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 961739749}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7fe1f71e19bdf4049893b1c23bcdec3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _material: {fileID: 2100000, guid: 7a877bea802014760ad1c802ed8383a7, type: 2}
-  _threshold: 0.5
-  _attenuation: 0.9
-  _intensity: 1
 --- !u!1 &2015958995
 GameObject:
   m_ObjectHideFlags: 0
@@ -580,7 +563,7 @@ GameObject:
   - component: {fileID: 2015958997}
   - component: {fileID: 2015958996}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: Red
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
