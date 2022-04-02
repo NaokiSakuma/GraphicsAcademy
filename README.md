@@ -26,3 +26,13 @@ Unity 2021.2.9f1
 * [ライティングの基本シェーダーの作成](https://github.com/NaokiSakuma/GraphicsAcademy/tree/main/Bultin/Assets/Day3/Practice1)
 * [Toonシェーダーの作成](https://github.com/NaokiSakuma/GraphicsAcademy/tree/main/Bultin/Assets/Day3/Practice2)
 * [様々なテクスチャ対応](https://github.com/NaokiSakuma/GraphicsAcademy/tree/main/Bultin/Assets/Day3/Practice3)
+
+## Day4
+
+* [ShaderGraph使いこなし](https://github.com/NaokiSakuma/GraphicsAcademy/tree/main/URP/Assets/Day4/Practice1)
+* [法線マップとキューブマップを同時に適応](https://github.com/NaokiSakuma/GraphicsAcademy/tree/main/Bultin/Assets/Day4/Practice2)
+
+## Day5
+
+* Wip ポストエフェクトの独自実装
+* [特殊なポストエフェクトの実装](https://github.com/NaokiSakuma/GraphicsAcademy/tree/main/URP/Assets/Day5/Practice2)
