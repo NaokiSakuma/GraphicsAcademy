@@ -11,6 +11,7 @@ Shader "SnowScene/FallSnow"
             "Queue" = "Transparent"
             "IgnoreProjector" = "True"
             "RenderType" = "Transparent"
+            "Renderpipeline" = "UniversalPipeline"
         }
 
         ZWrite Off
@@ -19,23 +20,27 @@ Shader "SnowScene/FallSnow"
 
         Pass
         {
-            CGPROGRAM
+            HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma target 3.0
-            #include "UnityCG.cginc"
 
-            uniform sampler2D _MainTex;
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            struct appdata_custom
+            #define UNITY_MATRIX_TEXTURE0 float4x4(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1)
+
+            CBUFFER_START(UnityPerMaterial)
+                sampler2D _MainTex;
+            CBUFFER_END
+
+            struct Attributes
             {
-                float4 vertex : POSITION;
-                float2 texcoord : TEXCOORD0;
+                float4 positionOS : POSITION;
+                float2 uv : TEXCOORD0;
             };
 
-            struct v2f
+            struct Varyings
             {
-                float4 pos : SV_POSITION;
+                float4 positionHCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
             };
 
@@ -47,39 +52,50 @@ Shader "SnowScene/FallSnow"
             float3 _MoveTotal;
             float3 _CamUp;
 
-            v2f vert(appdata_custom v)
+            float2 MultiplyUV(float4x4 mat, float2 inUV)
             {
-                float3 target = _TargetPosition;
-                float3 trip;
-                float3 mv = v.vertex.xyz;
-                mv += _MoveTotal;
-                trip = floor(((target - mv) * _RangeReverse + 1) * 0.5f);
-                trip *= (_Range * 2);
-                mv += trip;
+                float4 temp = float4(inUV.x, inUV.y, 0, 0);
+                temp = mul(mat, temp);
+                return temp.xy;
+            }
+
+            float3 ShakeXZSnow(float3 moveValue)
+            {
+                float3 shake = float3(
+                        sin(moveValue.x * 0.2) * sin(moveValue.y * 0.3) * sin(moveValue.x * 0.9) * sin(moveValue.y * 0.8),
+                        0,
+                        sin(moveValue.x * 0.1) * sin(moveValue.y * 0.2) * sin(moveValue.x * 0.8) * sin(moveValue.y * 1.2)
+                    );
+
+                return moveValue + shake;
+            }
+
+            Varyings vert(Attributes IN)
+            {
+                float3 moveValue = IN.positionOS.xyz + _MoveTotal;
+                float3 repeat = floor(((_TargetPosition - moveValue) * _RangeReverse + 1) * 0.5f);
+                repeat *= _Range * 2;
+                moveValue += repeat;
 
                 float3 diff = _CamUp * _Size;
-                float3 finalPosition;
-                float3 tv0 = mv;
-                tv0.x += sin(mv.x*0.2) * sin(mv.y*0.3) * sin(mv.x*0.9) * sin(mv.y*0.8);
-                tv0.z += sin(mv.x*0.1) * sin(mv.y*0.2) * sin(mv.x*0.8) * sin(mv.y*1.2);
+                float3 snowPos = ShakeXZSnow(moveValue);
 
-                float3 eyeVector = ObjSpaceViewDir(float4(tv0, 0));
+                float3 eyeVector = TransformWorldToObject(float4(snowPos, 0));
                 float3 sideVector = normalize(cross(eyeVector, diff));
-                tv0 += (v.texcoord.x - 0.5f) * sideVector * _Size;
-                tv0 += (v.texcoord.y - 0.5f) * diff;
-                finalPosition = tv0;
+                snowPos += (IN.uv.x - 0.5f) * sideVector * _Size;
+                snowPos += (IN.uv.y - 0.5f) * diff;
 
-                v2f o;
-                o.pos = UnityObjectToClipPos(finalPosition);
-                o.uv = MultiplyUV(UNITY_MATRIX_TEXTURE0, v.texcoord);
-                return o;
+                Varyings OUT;
+                OUT.positionHCS = TransformObjectToHClip(snowPos);
+                OUT.uv = MultiplyUV(UNITY_MATRIX_TEXTURE0, IN.uv);
+                return OUT;
             }
 
-            fixed4 frag(v2f i) :SV_TARGET
+            half4 frag(Varyings IN) :SV_TARGET
             {
-                return tex2D(_MainTex, i.uv);
+                return tex2D(_MainTex, IN.uv);
             }
-            ENDCG
+            ENDHLSL
         }
     }
 }
