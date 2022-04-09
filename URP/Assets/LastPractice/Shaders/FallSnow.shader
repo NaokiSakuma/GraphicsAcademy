@@ -2,7 +2,7 @@ Shader "SnowScene/FallSnow"
 {
     Properties
     {
-        _MainTex("MainTex", 2D) = "white" {}
+        _MainTex ("MainTex", 2D) = "white" {}
     }
     SubShader
     {
@@ -30,6 +30,13 @@ Shader "SnowScene/FallSnow"
 
             CBUFFER_START(UnityPerMaterial)
                 sampler2D _MainTex;
+                float4x4 _PrevInvMatrix;
+                float3 _TargetPosition;
+                float _Range;
+                float _RangeReverse;
+                float _Size;
+                float3 _MoveTotal;
+                float3 _CamUp;
             CBUFFER_END
 
             struct Attributes
@@ -42,15 +49,8 @@ Shader "SnowScene/FallSnow"
             {
                 float4 positionHCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
+                float cameraLength : TEXCOORD1;
             };
-
-            float4x4 _PrevInvMatrix;
-            float3 _TargetPosition;
-            float _Range;
-            float _RangeReverse;
-            float _Size;
-            float3 _MoveTotal;
-            float3 _CamUp;
 
             float2 MultiplyUV(float4x4 mat, float2 inUV)
             {
@@ -72,7 +72,7 @@ Shader "SnowScene/FallSnow"
 
             Varyings vert(Attributes IN)
             {
-                float3 moveValue = IN.positionOS.xyz + _MoveTotal;
+                float3 moveValue = IN.positionOS + _MoveTotal;
                 float3 repeat = floor(((_TargetPosition - moveValue) * _RangeReverse + 1) * 0.5f);
                 repeat *= _Range * 2;
                 moveValue += repeat;
@@ -88,12 +88,15 @@ Shader "SnowScene/FallSnow"
                 Varyings OUT;
                 OUT.positionHCS = TransformObjectToHClip(snowPos);
                 OUT.uv = MultiplyUV(UNITY_MATRIX_TEXTURE0, IN.uv);
+                float3 worldPos = mul(unity_ObjectToWorld, snowPos).xyz;
+                OUT.cameraLength = length(_WorldSpaceCameraPos - worldPos) * 0.8;
                 return OUT;
             }
 
             half4 frag(Varyings IN) :SV_TARGET
             {
-                return tex2D(_MainTex, IN.uv);
+                #define _MaxMipMapNum 5
+                return tex2Dlod(_MainTex, float4(IN.uv, 0, _MaxMipMapNum - IN.cameraLength));
             }
             ENDHLSL
         }
