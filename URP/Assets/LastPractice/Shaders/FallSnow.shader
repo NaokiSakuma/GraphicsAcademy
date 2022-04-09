@@ -1,4 +1,4 @@
-Shader "Unlit/FallSnow"
+Shader "SnowScene/FallSnow"
 {
     Properties
     {
@@ -17,7 +17,8 @@ Shader "Unlit/FallSnow"
         Cull Off
         Blend SrcAlpha OneMinusSrcAlpha
 
-        Pass {
+        Pass
+        {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -26,12 +27,14 @@ Shader "Unlit/FallSnow"
 
             uniform sampler2D _MainTex;
 
-            struct appdata_custom {
+            struct appdata_custom
+            {
                 float4 vertex : POSITION;
                 float2 texcoord : TEXCOORD0;
             };
 
-            struct v2f {
+            struct v2f
+            {
                 float4 pos : SV_POSITION;
                 float2 uv : TEXCOORD0;
             };
@@ -39,17 +42,18 @@ Shader "Unlit/FallSnow"
             float4x4 _PrevInvMatrix;
             float3 _TargetPosition;
             float _Range;
-            float _RangeR;
+            float _RangeReverse;
             float _Size;
             float3 _MoveTotal;
             float3 _CamUp;
 
-            v2f vert(appdata_custom v) {
+            v2f vert(appdata_custom v)
+            {
                 float3 target = _TargetPosition;
                 float3 trip;
                 float3 mv = v.vertex.xyz;
                 mv += _MoveTotal;
-                trip = floor(((target - mv) * _RangeR + 1) * 0.5f);
+                trip = floor(((target - mv) * _RangeReverse + 1) * 0.5f);
                 trip *= (_Range * 2);
                 mv += trip;
 

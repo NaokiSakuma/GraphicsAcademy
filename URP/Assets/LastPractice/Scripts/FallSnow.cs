@@ -1,81 +1,118 @@
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
-namespace Snow
+namespace SnowScene
 {
     public class FallSnow : MonoBehaviour
     {
-        private const int SNOW_NUM = 16000;
-        private Vector3[] _vertices;
-        private int[] _triangles;
-        private Vector2[] _uvs;
+        [SerializeField]
+        private Camera snowCamera;
+        [SerializeField]
+        private Material snowMaterial;
+        [SerializeField]
+        private MeshFilter meshFilter;
 
-        private float _range;
-        private float _rangeR;
-        private Vector3 _move;
+        private const int SnowNum = 16000;
+        private const int SnowVertex = 4;
+        private const int SquareTriangleVertex = 6;
+        private const float CameraRange = 16.0f;
+        private const float CameraRangeReverse = 1.0f / CameraRange;
+        private Vector3 oldMoveValue;
 
-        void Start()
+        private static class SnowShaderPropertyIds
         {
-            _range = 16.0f;
-            _rangeR = 1.0f / _range;
-            _vertices = new Vector3[SNOW_NUM * 4];
-
-            for (int i = 0; i < SNOW_NUM; i++)
-            {
-                float x = Random.Range(-_range, _range);
-                float y = Random.Range(-_range, _range);
-                float z = Random.Range(-_range, _range);
-                var point = new Vector3(x, y, z);
-                _vertices[i * 4 + 0] = point;
-                _vertices[i * 4 + 1] = point;
-                _vertices[i * 4 + 2] = point;
-                _vertices[i * 4 + 3] = point;
-            }
-            _triangles = new int[SNOW_NUM * 6];
-            for (int i = 0; i < SNOW_NUM; i++)
-            {
-                _triangles[i * 6 + 0] = i * 4 + 0;
-                _triangles[i * 6 + 1] = i * 4 + 1;
-                _triangles[i * 6 + 2] = i * 4 + 2;
-                _triangles[i * 6 + 3] = i * 4 + 2;
-                _triangles[i * 6 + 4] = i * 4 + 1;
-                _triangles[i * 6 + 5] = i * 4 + 3;
-            }
-            _uvs = new Vector2[SNOW_NUM * 4];
-            for (int i = 0; i < SNOW_NUM; i++)
-            {
-                _uvs[i * 4 + 0] = new Vector2(0.0f, 0.0f);
-                _uvs[i * 4 + 1] = new Vector2(1.0f, 0.0f);
-                _uvs[i * 4 + 2] = new Vector2(0.0f, 1.0f);
-                _uvs[i * 4 + 3] = new Vector2(1.0f, 1.0f);
-            }
-
-            Mesh mesh = new Mesh();
-            mesh.name = "MeshSnowFlakes";
-            mesh.vertices = _vertices;
-            mesh.triangles = _triangles;
-            mesh.uv = _uvs;
-            mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 99999999);
-            var mf = GetComponent<MeshFilter>();
-            mf.sharedMesh = mesh;
+            public static readonly int Range = Shader.PropertyToID("_Range");
+            public static readonly int RangeReverse = Shader.PropertyToID("_RangeReverse");
+            public static readonly int Size = Shader.PropertyToID("_Size");
+            public static readonly int MoveTotal = Shader.PropertyToID("_MoveTotal");
+            public static readonly int CamUp = Shader.PropertyToID("_CamUp");
+            public static readonly int TargetPosition = Shader.PropertyToID("_TargetPosition");
         }
 
-        void LateUpdate()
+        private void Awake()
         {
-            var targetPosition = Camera.main.transform.TransformPoint(Vector3.forward * _range);
-            var renderer = GetComponent<Renderer>();
-            renderer.material.SetFloat("_Range", _range);
-            renderer.material.SetFloat("_RangeR", _rangeR);
-            renderer.material.SetFloat("_Size", 0.1f);
-            renderer.material.SetVector("_MoveTotal", _move);
-            renderer.material.SetVector("_CamUp", Camera.main.transform.up);
-            renderer.material.SetVector("_TargetPosition", targetPosition);
-            float x = (Mathf.PerlinNoise(0f, Time.time * 0.1f) - 0.5f) * 10f;
-            float y = -2f;
-            float z = (Mathf.PerlinNoise(Time.time*0.1f, 0f)-0.5f) * 10f;
-            _move += new Vector3(x, y, z) * Time.deltaTime;
-            _move.x = Mathf.Repeat(_move.x, _range * 2.0f);
-            _move.y = Mathf.Repeat(_move.y, _range * 2.0f);
-            _move.z = Mathf.Repeat(_move.z, _range * 2.0f);
+            meshFilter.sharedMesh = CreateSnowMesh();
+
+            this.UpdateAsObservable()
+                .Subscribe(_ =>
+                {
+                    SnowMaterialUpdate();
+                })
+                .AddTo(this);
+        }
+
+        private Mesh CreateSnowMesh()
+        {
+            var vertices = new Vector3[SnowNum * SnowVertex];
+
+            for (var i = 0; i < SnowNum; i++)
+            {
+                var point = new Vector3(
+                    Random.Range(-CameraRange, CameraRange),
+                    Random.Range(-CameraRange, CameraRange),
+                    Random.Range(-CameraRange, CameraRange)
+                    );
+                vertices[i * SnowVertex + 0] = point;
+                vertices[i * SnowVertex + 1] = point;
+                vertices[i * SnowVertex + 2] = point;
+                vertices[i * SnowVertex + 3] = point;
+            }
+
+            var triangles = new int[SnowNum * SquareTriangleVertex];
+            for (var i = 0; i < SnowNum; i++)
+            {
+                triangles[i * SquareTriangleVertex + 0] = i * SnowVertex + 0;
+                triangles[i * SquareTriangleVertex + 1] = i * SnowVertex + 1;
+                triangles[i * SquareTriangleVertex + 2] = i * SnowVertex + 2;
+                triangles[i * SquareTriangleVertex + 3] = i * SnowVertex + 2;
+                triangles[i * SquareTriangleVertex + 4] = i * SnowVertex + 1;
+                triangles[i * SquareTriangleVertex + 5] = i * SnowVertex + 3;
+            }
+            var uvs = new Vector2[SnowNum * SnowVertex];
+            for (var i = 0; i < SnowNum; i++)
+            {
+                uvs[i * SnowVertex + 0] = new Vector2(0.0f, 0.0f);
+                uvs[i * SnowVertex + 1] = new Vector2(1.0f, 0.0f);
+                uvs[i * SnowVertex + 2] = new Vector2(0.0f, 1.0f);
+                uvs[i * SnowVertex + 3] = new Vector2(1.0f, 1.0f);
+            }
+
+            return new Mesh
+            {
+                vertices = vertices,
+                triangles = triangles,
+                uv = uvs,
+                bounds = new Bounds(Vector3.zero, Vector3.one * 99999999)
+            };
+        }
+
+        private void SnowMaterialUpdate()
+        {
+            snowMaterial.SetFloat(SnowShaderPropertyIds.Range, CameraRange);
+            snowMaterial.SetFloat(SnowShaderPropertyIds.RangeReverse, CameraRangeReverse);
+            snowMaterial.SetFloat(SnowShaderPropertyIds.Size, 0.1f);
+            snowMaterial.SetVector(SnowShaderPropertyIds.MoveTotal, CalcMoveValue());
+            snowMaterial.SetVector(SnowShaderPropertyIds.CamUp, snowCamera.transform.up);
+            var targetPosition = snowCamera.transform.TransformPoint(Vector3.forward * CameraRange);
+            snowMaterial.SetVector(SnowShaderPropertyIds.TargetPosition, targetPosition);
+        }
+
+        private Vector3 CalcMoveValue()
+        {
+            var moveValue = new Vector3(
+                (Mathf.PerlinNoise(0f, Time.time * 0.1f) - 0.5f) * 10f,
+                -2f,
+                (Mathf.PerlinNoise(Time.time * 0.1f, 0f) - 0.5f) * 10f
+            ) * Time.deltaTime;
+            oldMoveValue += moveValue;
+
+            return new Vector3(
+                    Mathf.Repeat(oldMoveValue.x, CameraRange * 2.0f),
+                    Mathf.Repeat(oldMoveValue.y, CameraRange * 2.0f),
+                    Mathf.Repeat(oldMoveValue.z, CameraRange * 2.0f)
+            );
+
         }
     }
 }

@@ -247,9 +247,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 313738380}
-  - component: {fileID: 313738379}
   - component: {fileID: 313738381}
   - component: {fileID: 313738382}
+  - component: {fileID: 313738379}
   m_Layer: 0
   m_Name: FallSnow
   m_TagString: Untagged
@@ -269,6 +269,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c3bf32b865f7410a8c75768d50a12af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  snowCamera: {fileID: 961739752}
+  snowMaterial: {fileID: 2100000, guid: b1263de29e810430398fc4864a5a4600, type: 2}
+  meshFilter: {fileID: 313738382}
 --- !u!4 &313738380
 Transform:
   m_ObjectHideFlags: 0
