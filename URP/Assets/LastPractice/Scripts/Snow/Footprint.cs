@@ -61,9 +61,9 @@ namespace SnowScene.Snow
         /// <param name="alpha"></param>
         void DrawAt(float x, float y, float alpha)
         {
-            // var tmp = RenderTexture.GetTemporary(rtWidth, rtHeight);
-            // Graphics.Blit(targetTexture, tmp);
-            //Graphics.Blit(tmp, targetTexture);
+             var tmp = RenderTexture.GetTemporary(rtWidth, rtHeight);
+             Graphics.Blit(targetTexture, tmp);
+            Graphics.Blit(tmp, targetTexture, pileMat);
 
             Graphics.Blit(targetTexture, auxTexture);
 
@@ -113,7 +113,7 @@ namespace SnowScene.Snow
             GL.PopMatrix();
             RenderTexture.active = null;
 
-            // RenderTexture.ReleaseTemporary(tmp);
+            RenderTexture.ReleaseTemporary(tmp);
 
             // Graphics.Blit(auxTexture, targetTexture, pileMat);
         }
