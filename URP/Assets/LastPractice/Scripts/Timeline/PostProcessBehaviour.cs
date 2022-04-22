@@ -30,24 +30,31 @@ namespace Timeline
             }
         }
 
-        void QuickVolume()
+        private void QuickVolume()
         {
-            if (volume == null)
+            if (volume != null)
             {
-                volume = new GameObject().AddComponent<Volume>();
-                volume.gameObject.layer = layer;
-                volume.gameObject.hideFlags = HideFlags.DontSave | HideFlags.NotEditable;
-                volume.gameObject.name = $"PostProcessBehaviourVolume [Profile {profile.name}]";
-                volume.weight = 0;
-                volume.priority = 1;
-                volume.isGlobal = true;
-                volume.profile = profile;
+                return;
             }
+
+            volume = new GameObject().AddComponent<Volume>();
+            var gameObject = volume.gameObject;
+            gameObject.layer = layer;
+            gameObject.hideFlags = HideFlags.DontSave | HideFlags.NotEditable;
+            gameObject.name = $"PostProcessBehaviourVolume [Profile {profile.name}]";
+            volume.weight = 0;
+            volume.priority = 1;
+            volume.isGlobal = true;
+            volume.profile = profile;
         }
 
         public void ChangeWeight(float time)
         {
-            if (volume == null) { return; }
+            if (volume == null)
+            {
+                return;
+            }
+
             volume.weight = weightCurve.Evaluate(time);
         }
     }

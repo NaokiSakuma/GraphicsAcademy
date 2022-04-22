@@ -7,17 +7,14 @@ namespace Timeline
 {
     public class PostProcessClip : PlayableAsset, ITimelineClipAsset
     {
-        public PostProcessBehaviour template = new PostProcessBehaviour();
+        public PostProcessBehaviour template = new();
 
-        public ClipCaps clipCaps
-        {
-            get { return ClipCaps.Extrapolation | ClipCaps.Blending; }
-        }
+        public ClipCaps clipCaps => ClipCaps.Extrapolation | ClipCaps.Blending;
 
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
             var playable = ScriptPlayable<PostProcessBehaviour>.Create(graph, template);
-            PostProcessBehaviour clone = playable.GetBehaviour();
+            var clone = playable.GetBehaviour();
             return playable;
         }
     }
@@ -27,20 +24,20 @@ namespace Timeline
     [CustomEditor(typeof(PostProcessClip))]
     public class PostProcessClipEditor : Editor
     {
-        PostProcessClip postProcessClip;
-        Editor profileEditor;
-        SerializedProperty profileProperty;
-        SerializedProperty curveProperty;
+        private PostProcessClip postProcessClip;
+        private Editor profileEditor;
+        private SerializedProperty profileProperty;
+        private SerializedProperty curveProperty;
 
-        void OnEnable()
+        private void OnEnable()
         {
             postProcessClip = target as PostProcessClip;
-            profileEditor = Editor.CreateEditor(postProcessClip.template.profile);
+            profileEditor = CreateEditor(postProcessClip?.template.profile);
             profileProperty = serializedObject.FindProperty("template.profile");
             curveProperty = serializedObject.FindProperty("template.weightCurve");
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             DestroyImmediate(profileEditor);
         }

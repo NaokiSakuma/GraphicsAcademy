@@ -7,17 +7,18 @@ namespace Timeline
     {
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
-            int inputCount = playable.GetInputCount();
-            for (int i = 0; i < inputCount; i++)
+            var inputCount = playable.GetInputCount();
+            for (var i = 0; i < inputCount; i++)
             {
                 var playableInput = (ScriptPlayable<PostProcessBehaviour>)playable.GetInput(i);
-                PostProcessBehaviour input = playableInput.GetBehaviour();
-                float inputWeight = playable.GetInputWeight(i);
+                var input = playableInput.GetBehaviour();
+                var inputWeight = playable.GetInputWeight(i);
                 if (Mathf.Approximately(inputWeight, 0f))
                 {
                     continue;
                 }
-                float normalizedTime = (float)(playableInput.GetTime() / playableInput.GetDuration());
+
+                var normalizedTime = (float)(playableInput.GetTime() / playableInput.GetDuration());
                 input.ChangeWeight(normalizedTime);
             }
         }
