@@ -1,45 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4053985963480482206
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b2db86121404754db890f4c8dfe81b2, type: 3}
-  m_Name: Bloom
-  m_EditorClassIdentifier: 
-  active: 0
-  threshold:
-    m_OverrideState: 1
-    m_Value: 2.8
-  intensity:
-    m_OverrideState: 0
-    m_Value: 0
-  scatter:
-    m_OverrideState: 0
-    m_Value: 0.7
-  clamp:
-    m_OverrideState: 0
-    m_Value: 65472
-  tint:
-    m_OverrideState: 0
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
-  highQualityFiltering:
-    m_OverrideState: 0
-    m_Value: 0
-  skipIterations:
-    m_OverrideState: 0
-    m_Value: 1
-  dirtTexture:
-    m_OverrideState: 0
-    m_Value: {fileID: 0}
-  dirtIntensity:
-    m_OverrideState: 0
-    m_Value: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -53,9 +13,9 @@ MonoBehaviour:
   m_Name: Global Volume Profile
   m_EditorClassIdentifier: 
   components:
-  - {fileID: -4053985963480482206}
-  - {fileID: 5509843113183986028}
---- !u!114 &5509843113183986028
+  - {fileID: 6179998038211163001}
+  - {fileID: 6913070099183658041}
+--- !u!114 &1018976220696653967
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -64,34 +24,86 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdfbdbb87d3286943a057f7791b43141, type: 3}
-  m_Name: ChannelMixer
+  m_Script: {fileID: 11500000, guid: 41e2a8f77a0c7584ba7d3ebb866b3329, type: 3}
+  m_Name: ZoomBlur
   m_EditorClassIdentifier: 
   active: 1
-  redOutRedIn:
+  m_AdvancedMode: 0
+  focusPower:
     m_OverrideState: 1
-    m_Value: 174
-  redOutGreenIn:
+    m_Value: 45
+  focusDetail:
+    m_OverrideState: 0
+    m_Value: 5
+  focusScreenPosition:
+    m_OverrideState: 0
+    m_Value: {x: 0, y: 0}
+  referenceResolutionX:
+    m_OverrideState: 0
+    m_Value: 1334
+--- !u!114 &6134682145303202937
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7b26e91f160140389c7e90145184c9a, type: 3}
+  m_Name: ZoomBlur
+  m_EditorClassIdentifier: 
+  active: 1
+  focusPower:
     m_OverrideState: 1
-    m_Value: 0
-  redOutBlueIn:
+    m_Value: 45
+  focusDetail:
+    m_OverrideState: 1
+    m_Value: 29
+  focusScreenPosition:
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 0}
+  referenceResolutionX:
     m_OverrideState: 0
-    m_Value: 0
-  greenOutRedIn:
+    m_Value: 1334
+--- !u!114 &6179998038211163001
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81180773991d8724ab7f2d216912b564, type: 3}
+  m_Name: ChromaticAberration
+  m_EditorClassIdentifier: 
+  active: 1
+  intensity:
+    m_OverrideState: 1
+    m_Value: 1
+--- !u!114 &6913070099183658041
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7b26e91f160140389c7e90145184c9a, type: 3}
+  m_Name: RoarVolumeComponent
+  m_EditorClassIdentifier: 
+  active: 1
+  focusPower:
+    m_OverrideState: 1
+    m_Value: 45
+  focusDetail:
     m_OverrideState: 0
-    m_Value: 0
-  greenOutGreenIn:
+    m_Value: 5
+  focusScreenPosition:
     m_OverrideState: 0
-    m_Value: 100
-  greenOutBlueIn:
+    m_Value: {x: 0, y: 0}
+  referenceResolutionX:
     m_OverrideState: 0
-    m_Value: 0
-  blueOutRedIn:
-    m_OverrideState: 0
-    m_Value: 0
-  blueOutGreenIn:
-    m_OverrideState: 0
-    m_Value: 0
-  blueOutBlueIn:
-    m_OverrideState: 0
-    m_Value: 100
+    m_Value: 1334

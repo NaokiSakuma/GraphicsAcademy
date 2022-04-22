@@ -34,7 +34,25 @@ MonoBehaviour:
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -109,7 +127,25 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -774,10 +810,10 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
-    m_Start: 1.1333333333333333
+    m_Start: 9.6
     m_ClipIn: 0
-    m_Asset: {fileID: 6175255992091256916}
-    m_Duration: 5
+    m_Asset: {fileID: 6451833870799579765}
+    m_Duration: 1.4000000000000004
     m_TimeScale: 1
     m_ParentTrack: {fileID: 4633473137937528492}
     m_EaseInDuration: 0
@@ -840,8 +876,8 @@ MonoBehaviour:
     m_PostExtrapolationMode: 0
     m_PreExtrapolationMode: 0
     m_PostExtrapolationTime: Infinity
-    m_PreExtrapolationTime: 1.1333333333333333
-    m_DisplayName: Global Volume Profile
+    m_PreExtrapolationTime: 9.6
+    m_DisplayName: ZoomBlur
   m_Markers:
     m_Objects: []
 --- !u!114 &5683472209770284707
@@ -987,7 +1023,7 @@ MonoBehaviour:
   m_OpenClipOffsetRotation: {x: 0, y: 0, z: 0, w: 1}
   m_Rotation: {x: 0, y: 0, z: 0, w: 1}
   m_ApplyOffsets: 0
---- !u!114 &6175255992091256916
+--- !u!114 &6451833870799579765
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1001,7 +1037,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   template:
     volume: {fileID: 0}
-    profile: {fileID: 11400000, guid: 99f48142cbf7e42749f0648d6358bc0a, type: 2}
+    profile: {fileID: 11400000, guid: bdc5eb7002c38e3499961a6c974f6907, type: 2}
     layer: 0
     weightCurve:
       serializedVersion: 2
@@ -1009,16 +1045,25 @@ MonoBehaviour:
       - serializedVersion: 3
         time: 0
         value: 0
-        inSlope: 0
-        outSlope: 1
+        inSlope: 2
+        outSlope: 2
         tangentMode: 0
         weightedMode: 0
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 1
+        time: 0.49236256
+        value: 0.99540496
+        inSlope: 0.9902749
+        outSlope: 0.9902749
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.9500122
+        value: 0.011791229
+        inSlope: 0
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
