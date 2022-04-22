@@ -4,7 +4,7 @@
     {
         _MainTex("Texture", 2D) = "white" {}
     }
-    
+
     SubShader
     {
         Cull Off ZWrite Off ZTest Always
@@ -14,12 +14,13 @@
             CGPROGRAM
                 #pragma vertex Vert
                 #pragma fragment Frag
-                
+
                 sampler2D _MainTex;
                 float2 _FocusScreenPosition;
                 float _FocusPower;
                 int _FocusDetail;
                 int _ReferenceResolutionX;
+                float4 _MainTex_TexelSize;
 
                 struct appdata
                 {
@@ -43,11 +44,11 @@
 
                 float4 Frag (v2f i) : SV_Target
                 {
-                    float2 screenPoint = _FocusScreenPosition + _ScreenParams.xy/2;
+                    float2 screenPoint = _ScreenParams.xy/2;
                     float2 uv = i.uv;
                     float2 mousePos = (screenPoint.xy / _ScreenParams.xy);
                     float2 focus = uv - mousePos;
-                    fixed aspectX = _ScreenParams.x/_ReferenceResolutionX;
+                    fixed aspectX = _ScreenParams.x/1334;
                     float4 outColor = float4(0, 0, 0, 1);
                     for (int i=0; i<_FocusDetail; i++) {
                         float power = 1.0 - _FocusPower * (1.0/_ScreenParams.x * aspectX) * float(i);
