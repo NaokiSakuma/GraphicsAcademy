@@ -1,28 +1,29 @@
-Shader "SnowScene/Footprint"
+Shader "TrailByShaderGraph"
 {
     Properties
     {
         _MainTex ("MainTex", 2D) = "white" {}
-        _Color ("Snow Color", Color) = (1, 1, 1, 0)
-        // todo 以下よくわからんマップだけど、パット見ノーマルマップとかに見える
-        // todo whiteだとだめ？
-        _BumpMap ("Bump Map", 2D) = "bump" {}
-        _SpecGlowMap ("Specular Map", 2D) = "white" {}
-        // render texture
-        _IndentMap ("Indentation Map", 2D) = "white" {}
-        // 凹みの滑らかさ
-        _Tessellation ("Tessellation", Range(1, 32)) = 4
-        // 雪の深さ
-        _IndentDepth ("Indentation Depth", Range(0, 0.1)) = 0.1
+        _TrailTexture ("TrailTexture", 2D) = "white" {}
+        _NormalTexture ("NormalTexture", 2D) = "white" {}
+        _DepthAmount ("Depth Amount", float) = -0.17
+        _ReSampleOffset ("_ReSampleOffset", float) = 0
+        _BlurWidth ("_BlurWidth", float) = 0.01
         _TessFactor ("Tessellation", Range(1, 50)) = 10
     }
     SubShader
     {
         Tags
         {
-            "RenderType" = "Queue"
+            "Queue" = "Transparent"
+            "IgnoreProjector" = "True"
+            "RenderType" = "Transparent"
+            "PreviewType" = "Plane"
             "Renderpipeline" = "UniversalPipeline"
         }
+
+        ZWrite Off
+        Cull Off
+        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
@@ -35,21 +36,18 @@ Shader "SnowScene/Footprint"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
-            // ?
-            // #include "Tessellation.cginc"
-            TEXTURE2D(_IndentMap);
             CBUFFER_START(UnityPerMaterial)
                 sampler2D _MainTex;
                 float4 _MainTex_ST;
-
-                sampler2D _SpecGlossMap;
-                sampler2D _BumpMap;
+                TEXTURE2D(_TrailTexture);
+                float _DepthAmount;
+                float _ReSampleOffset;
+                float _BlurWidth;
                 float _TessFactor;
-                half4 _Color;
-                half _Tessellation;
-                half _IndentDepth;
-            SAMPLER(sampler_linear_repeat);
-            SAMPLER(sampler_IndentMap);
+                SamplerState sampler_linear_repeat;
+                SAMPLER(SamplerState_Linear_Repeat);
+                float4 _TrailTexture_ST;
+                sampler2D _NormalTexture;
             CBUFFER_END
 
             struct VSInput
@@ -90,35 +88,6 @@ Shader "SnowScene/Footprint"
                 float3 lightTS    : TEXCOORD1;
             };
 
-            // struct Varyings
-            // {
-            //     float4 positionHCS : SV_POSITION;
-            //     float3 normal : NORMAL;
-            //     float2 uv : TEXCOORD0;
-            // };
-
-            // 名前てきとー、何しているかわかったら命名
-            // float Sampling(float2 uv, float2 offset)
-            // {
-            //     return tex2Dlod(_IndentMap, float4(uv - offset, 0, 0)) * _IndentDepth;
-            // }
-            //
-            // float3 calcNormal(float2 texcoord)
-            // {
-            //     const float3 off = float3(-0.01f, 0, 0.01f); // texture resolution to sample exact texels
-            //     const float2 size = float2(0.01, 0.0); // size of a single texel in relation to world units
-            //
-            //     float s01 = tex2Dlod(_IndentMap, float4(texcoord.xy - off.xy, 0, 0)) * _IndentDepth;
-            //     float s21 = tex2Dlod(_IndentMap, float4(texcoord.xy - off.zy, 0, 0)) * _IndentDepth;
-            //     float s10 = tex2Dlod(_IndentMap, float4(texcoord.xy - off.yx, 0, 0)) * _IndentDepth;
-            //     float s12 = tex2Dlod(_IndentMap, float4(texcoord.xy - off.yz, 0, 0)) * _IndentDepth;
-            //
-            //     float3 va = normalize(float3(size.xy, s21 - s01));
-            //     float3 vb = normalize(float3(size.yx, s12 - s10));
-            //
-            //     //return float3(s01, s12, 0);
-            //     return normalize(cross(va, vb));
-            // }
 
             float3 CalcuateHeight(float2 uv)
             {
@@ -128,8 +97,8 @@ Shader "SnowScene/Footprint"
                 {
                     for(int j = -1; j <= 1; j++)
                     {
-                        mainTrail += SAMPLE_TEXTURE2D_LOD(_IndentMap, sampler_linear_repeat,
-                            float2(uv.x + i * 0.01, uv.y + j * 0.01), 1);
+                        mainTrail += SAMPLE_TEXTURE2D_LOD(_TrailTexture, SamplerState_Linear_Repeat,
+                            float2(uv.x + i * _BlurWidth, uv.y + j * _BlurWidth), 1);
                     }
                 }
 
@@ -138,35 +107,12 @@ Shader "SnowScene/Footprint"
 
             HsInput vert(VSInput IN)
             {
-                // IN.positionOS.z += _IndentDepth;
-
                 HsInput OUT;
-
-                OUT.uv = TRANSFORM_TEX(IN.uv, _MainTex);
-
-                // よくわからん
-                float3 offset = float3(-0.01f, 0, 0.01f);
-                float2 size = float2(0.01, 0.0);
-
-                // float xySampling = Sampling(IN.uv, offset.xy);
-                // float zySampling = Sampling(IN.uv, offset.zy);
-                // float yxSampling = Sampling(IN.uv, offset.yx);
-                // float yzSampling = Sampling(IN.uv, offset.yz);
-
-                // float3 va = normalize(float3(size.xy, zySampling - xySampling));
-                // float3 vb = normalize(float3(size.yx, yzSampling - yxSampling));
-
-                // float3 normal = normalize(cross(va, vb));
-
-                // float3 normal = normalize(calcNormal(IN.uv) + IN.normal.xyz);
-
-                float3 normal = CalcuateHeight(IN.uv);
-
+                OUT.uv = IN.uv;
                 OUT.normalOS = IN.normal;
-                IN.positionOS.xyz += normal * _IndentDepth;
-
                 OUT.positionOS = float4(IN.positionOS.xyz, 1);
                 OUT.tangentOS = IN.tangent;
+
                 return OUT;
             }
 
@@ -229,15 +175,12 @@ Shader "SnowScene/Footprint"
                 bary.y * input[1].tangentOS +
                 bary.z * input[2].tangentOS);
 
-                // ここ？
-                // float3 normal = normalize(calcNormal(output.uv) + normalOS.xyz);
-                // float d = tex2Dlod(_IndentMap, float4(1 - output.uv.x, output.uv.y, 0, 0)).r * _IndentDepth;
-                // positionOS.xyz += normal;
-
+                float3 depth = float3(0, _DepthAmount, 0);
+                float3 multied = CalcuateHeight(output.uv) * depth;
 
                 // ----------------- copied from vertex shader -------------------
                 // get vectors in the world coordinate
-                VertexPositionInputs vertexInput = GetVertexPositionInputs(positionOS);
+                VertexPositionInputs vertexInput = GetVertexPositionInputs(positionOS + multied);
                 VertexNormalInputs vertexNormalInput = GetVertexNormalInputs(normalOS, tangentOS);
 
                 output.positionCS = TransformWorldToHClip(vertexInput.positionWS);
@@ -255,19 +198,13 @@ Shader "SnowScene/Footprint"
 
             half4 frag(DsOutput IN) :SV_TARGET
             {
-                return half4(1,1,1,1);
-                // half4 col = tex2D(_MainTex, IN.uv);
-                // float3 normal = UnpackNormal(tex2D(_IndentMap, IN.uv));
-                // float diff = saturate(dot(IN.lightTS, normal));
-                //
-                // col *= diff;
-                // return col;
-
-                // half4 rtCol = tex2D(_IndentMap, IN.uv);
-                // return rtCol;
-                //
-                // half4 col = tex2D(_MainTex, IN.uv);
-                // return col;
+                float3 normalByTex = UnpackNormal(tex2D(_NormalTexture, IN.uv));
+                float diff = 1 - saturate(dot(normalByTex, IN.lightTS));
+                // ここなのは確実
+                half4 col = tex2D(_MainTex, IN.uv);
+                diff = lerp(1, diff, _ReSampleOffset);
+                col.rgb *= diff;
+                return col;
             }
             ENDHLSL
         }
