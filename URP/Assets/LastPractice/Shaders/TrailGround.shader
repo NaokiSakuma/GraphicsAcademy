@@ -1,4 +1,4 @@
-Shader "TrailByShaderGraph"
+Shader "SnowScene/TrailGround"
 {
     Properties
     {

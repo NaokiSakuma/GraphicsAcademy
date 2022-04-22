@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Footprint 1
-  m_Shader: {fileID: 4800000, guid: 27adcc6f60e754cda832b90300f6a4b2, type: 3}
+  m_Name: TrailGround
+  m_Shader: {fileID: 4800000, guid: d20500f3a6e2e474bb3201582fcd5b78, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -19,30 +19,26 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _IndentMap:
-        m_Texture: {fileID: 8400000, guid: 6c3c030f2030b42eaa8b623e4af1e7d4, type: 2}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 1213df736d965458e9f4237c77f14b85, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SpecGlowMap:
-        m_Texture: {fileID: 0}
+    - _NormalTexture:
+        m_Texture: {fileID: 8400000, guid: 6bea2944d46fc4cfd9074d75b82bc4c2, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TrailTexture:
+        m_Texture: {fileID: 8400000, guid: 6bea2944d46fc4cfd9074d75b82bc4c2, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Displacement: 0.3
-    - _IndentDepth: 0.1
-    - _MaxDist: 25
-    - _MinDist: 10
-    - _TessFactor: 2
-    - _Tessellation: 3
+    - _BlurWidth: 0
+    - _DepthAmount: -0.51
+    - _LightPow: 0.298
+    - _ReSampleOffset: 0.34
+    - _TessFactor: 5.2
+    - _Tessellation: 4
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.4339623, g: 0.4339623, b: 0.4339623, a: 0}
   m_BuildTextureStacks: []
