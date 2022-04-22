@@ -4,7 +4,6 @@ using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 
-
 namespace SnowScene.Player
 {
     public class PlayerActor : MonoBehaviour
@@ -31,18 +30,19 @@ namespace SnowScene.Player
             this.UpdateAsObservable()
                 .Subscribe(_ =>
                 {
-                    RaycastHit hit;
-                    if(Physics.Raycast(transform.localPosition, Vector3.down, out hit))
+                    if (Physics.Raycast(transform.localPosition, Vector3.down, out var hit))
                     {
                         var texDraw = hit.collider.gameObject.GetComponent<Footprint>();
+
                         if (texDraw == null)
+                        {
                             return;
 
-                        texDraw.IndentAt(hit);
+                        }
+                        texDraw.DrawFootPoint(hit.textureCoord);
                     }
                 })
                 .AddTo(this);
-
         }
 
         private void OnDestroy()

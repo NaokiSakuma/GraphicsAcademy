@@ -4,118 +4,67 @@ namespace SnowScene.Snow
 {
     public class Footprint : MonoBehaviour
     {
-        public Texture2D texture;
+        [SerializeField]
+        private Texture2D stampTexture;
 
-        // 多分いらない
-        public Texture2D stampTexture;
-        public RenderTexture tempTestRenderTexture;
-        public int rtWidth = 512;
-        public int rtHeight = 512;
+        [SerializeField]
+        private RenderTexture renderTexture;
+        [SerializeField]
+        private int rtWidth = 512;
+        [SerializeField]
+        private int rtHeight = 512;
 
-        private RenderTexture targetTexture;
-        private RenderTexture auxTexture;
+        [SerializeField]
+        private Material stampMaterial;
 
-        public Material mat;
+        [SerializeField]
+        private Material pileMaterial;
 
-        public Material pileMat;
+        private RenderTexture scrRenderTexture;
+        private RenderTexture destRenderTexture;
 
-        // mouse debug draw
-        private Vector3 _prevMousePosition;
-        private bool _mouseDrag = false;
-
-        private Color[] buffer;
-
-        public Rect debugRect;
-
-        void Awake()
+        private void Awake()
         {
-            targetTexture = new RenderTexture(rtWidth, rtHeight, 32);
-
-            // temporarily use a given render texture to be able to see how it looks
-            targetTexture = tempTestRenderTexture;
-            auxTexture = new RenderTexture(rtWidth, rtHeight, 32);
-
-            GetComponent<Renderer>().material.SetTexture("_Indentmap", targetTexture);
-            Graphics.Blit(texture, targetTexture);
+            scrRenderTexture = new RenderTexture(rtWidth, rtHeight, 32);
+            scrRenderTexture = renderTexture;
+            destRenderTexture = new RenderTexture(rtWidth, rtHeight, 32);
         }
 
-        // add an indentation at a raycast hit position
-        public void IndentAt(RaycastHit hit)
-        {
-            if (hit.collider.gameObject != this.gameObject)
-                return;
-
-            float x = hit.textureCoord.x;
-            float y = hit.textureCoord.y;
-
-            DrawAt(x * targetTexture.width, y * targetTexture.height, 1.0f);
-        }
-
-        /// <summary>
-        /// todo:   it would probably be a bit more straight forward if we didn't use Graphics.DrawTexture
-        ///         and instead handle everything ourselves. This way we could directly provide multiple
-        ///         texture coordinates to each vertex.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="alpha"></param>
-        void DrawAt(float x, float y, float alpha)
+        public void DrawFootPoint(Vector2 position)
         {
              var tmp = RenderTexture.GetTemporary(rtWidth, rtHeight);
-             Graphics.Blit(targetTexture, tmp);
-            Graphics.Blit(tmp, targetTexture, pileMat);
+             Graphics.Blit(scrRenderTexture, tmp);
+            Graphics.Blit(tmp, scrRenderTexture, pileMaterial);
+            Graphics.Blit(scrRenderTexture, destRenderTexture);
 
-            Graphics.Blit(targetTexture, auxTexture);
-
-            // activate our render texture
-            RenderTexture.active = targetTexture;
+            RenderTexture.active = scrRenderTexture;
 
             GL.PushMatrix();
-            GL.LoadPixelMatrix(0, targetTexture.width, targetTexture.height, 0);
+            GL.LoadPixelMatrix(0, scrRenderTexture.width, scrRenderTexture.height, 0);
 
-            x = Mathf.Round(x);
-            y = Mathf.Round(y);
+            // var hitPosition = new Vector2()
+            var roundedPotion = CalcHitPosition(position);
 
-            // setup rect for our indent texture stamp to draw into
-            Rect screenRect = new Rect();
-            // put the center of the stamp at the actual draw position
-            screenRect.x = x - stampTexture.width * 0.5f;
-            screenRect.y = (targetTexture.height - y) - stampTexture.height * 0.5f;
-            screenRect.width = stampTexture.width;
-            screenRect.height = stampTexture.height;
+            var screenRect = new Rect
+            {
+                x = roundedPotion.x - stampTexture.width * 0.5f,
+                y = scrRenderTexture.height - roundedPotion.y - stampTexture.height * 0.5f,
+                width = stampTexture.width,
+                height = stampTexture.height
+            };
 
-            var tempVec = new Vector4();
-
-            tempVec.x = screenRect.x / ((float)targetTexture.width);
-            tempVec.y = 1 - (screenRect.y / (float)targetTexture.height);
-            tempVec.z = screenRect.width / targetTexture.width;
-            tempVec.w = screenRect.height / targetTexture.height;
-            tempVec.y -= tempVec.w;
-
-            mat.SetTexture("_MainTex", stampTexture);
-            mat.SetVector("_SourceTexCoords", tempVec);
-            mat.SetTexture("_SurfaceTex", auxTexture);
-
-            // Draw the texture
-            Graphics.DrawTexture(screenRect, stampTexture, mat);
-            //
-            // var scRect = new Rect
-            // {
-            //     x = 0,
-            //     y = 0,
-            //     width = targetTexture.width,
-            //     height = targetTexture.height,
-            // };
-            //
-            //
-            // Graphics.DrawTexture(scRect, texture, pileMat);
-
+            Graphics.DrawTexture(screenRect, stampTexture, stampMaterial);
             GL.PopMatrix();
             RenderTexture.active = null;
 
             RenderTexture.ReleaseTemporary(tmp);
+        }
 
-            // Graphics.Blit(auxTexture, targetTexture, pileMat);
+        private Vector2 CalcHitPosition(Vector2 position)
+        {
+            return new Vector2(
+                Mathf.Round(position.x * scrRenderTexture.width),
+                Mathf.Round(position.y * scrRenderTexture.height));
         }
     }
 }
