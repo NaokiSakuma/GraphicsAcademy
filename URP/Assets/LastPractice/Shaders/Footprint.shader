@@ -120,7 +120,7 @@ Shader "SnowScene/Footprint"
             //     return normalize(cross(va, vb));
             // }
 
-            float3 CalcuateHeight(float2 uv)
+            float3 CalcHeight(float2 uv)
             {
                 float3 mainTrail;
 
@@ -160,7 +160,7 @@ Shader "SnowScene/Footprint"
 
                 // float3 normal = normalize(calcNormal(IN.uv) + IN.normal.xyz);
 
-                float3 normal = CalcuateHeight(IN.uv);
+                float3 normal = CalcHeight(IN.uv);
 
                 OUT.normalOS = IN.normal;
                 IN.positionOS.xyz += normal * _IndentDepth;

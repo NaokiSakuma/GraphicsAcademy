@@ -1,3 +1,5 @@
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 namespace SnowScene.Snow
@@ -18,7 +20,7 @@ namespace SnowScene.Snow
         private Material stampMaterial;
 
         [SerializeField]
-        private Material pileMaterial;
+        private Material piledMaterial;
 
         private RenderTexture scrRenderTexture;
         private RenderTexture destRenderTexture;
@@ -28,13 +30,17 @@ namespace SnowScene.Snow
             scrRenderTexture = new RenderTexture(rtWidth, rtHeight, 32);
             scrRenderTexture = renderTexture;
             destRenderTexture = new RenderTexture(rtWidth, rtHeight, 32);
+
+            this.UpdateAsObservable()
+                .Subscribe(_ =>
+                {
+                    PiledUp();
+                })
+                .AddTo(this);
         }
 
         public void DrawFootPoint(Vector2 position)
         {
-             var tmp = RenderTexture.GetTemporary(rtWidth, rtHeight);
-             Graphics.Blit(scrRenderTexture, tmp);
-            Graphics.Blit(tmp, scrRenderTexture, pileMaterial);
             Graphics.Blit(scrRenderTexture, destRenderTexture);
 
             RenderTexture.active = scrRenderTexture;
@@ -42,7 +48,6 @@ namespace SnowScene.Snow
             GL.PushMatrix();
             GL.LoadPixelMatrix(0, scrRenderTexture.width, scrRenderTexture.height, 0);
 
-            // var hitPosition = new Vector2()
             var roundedPotion = CalcHitPosition(position);
 
             var screenRect = new Rect
@@ -56,8 +61,6 @@ namespace SnowScene.Snow
             Graphics.DrawTexture(screenRect, stampTexture, stampMaterial);
             GL.PopMatrix();
             RenderTexture.active = null;
-
-            RenderTexture.ReleaseTemporary(tmp);
         }
 
         private Vector2 CalcHitPosition(Vector2 position)
@@ -65,6 +68,15 @@ namespace SnowScene.Snow
             return new Vector2(
                 Mathf.Round(position.x * scrRenderTexture.width),
                 Mathf.Round(position.y * scrRenderTexture.height));
+        }
+
+        private void PiledUp()
+        {
+            var tmp = RenderTexture.GetTemporary(rtWidth, rtHeight);
+            Graphics.Blit(scrRenderTexture, tmp);
+            Graphics.Blit(tmp, scrRenderTexture, piledMaterial);
+
+            RenderTexture.ReleaseTemporary(tmp);
         }
     }
 }
