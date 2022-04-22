@@ -22,6 +22,9 @@ namespace SnowScene.Snow
         [SerializeField]
         private Material piledMaterial;
 
+        [SerializeField]
+        private int piledFrame;
+
         private RenderTexture scrRenderTexture;
         private RenderTexture destRenderTexture;
 
@@ -31,7 +34,8 @@ namespace SnowScene.Snow
             scrRenderTexture = renderTexture;
             destRenderTexture = new RenderTexture(rtWidth, rtHeight, 32);
 
-            this.UpdateAsObservable()
+            Observable
+                .IntervalFrame(piledFrame)
                 .Subscribe(_ =>
                 {
                     PiledUp();

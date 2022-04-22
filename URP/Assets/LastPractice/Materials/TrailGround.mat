@@ -40,5 +40,5 @@ Material:
     - _TessFactor: 5.2
     - _Tessellation: 4
     m_Colors:
-    - _Color: {r: 0.4339623, g: 0.4339623, b: 0.4339623, a: 0}
+    - _Color: {r: 0.3301887, g: 0.3301887, b: 0.3301887, a: 0}
   m_BuildTextureStacks: []
