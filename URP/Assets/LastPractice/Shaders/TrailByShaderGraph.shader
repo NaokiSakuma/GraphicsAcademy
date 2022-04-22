@@ -6,7 +6,7 @@ Shader "TrailByShaderGraph"
         _TrailTexture ("TrailTexture", 2D) = "white" {}
         _NormalTexture ("NormalTexture", 2D) = "white" {}
         _DepthAmount ("Depth Amount", float) = -0.17
-        _ReSampleOffset ("_ReSampleOffset", float) = 0
+        _LightPow ("LightPow", Range(0, 1)) = 0
         _BlurWidth ("_BlurWidth", float) = 0.01
         _TessFactor ("Tessellation", Range(1, 50)) = 10
     }
@@ -41,7 +41,7 @@ Shader "TrailByShaderGraph"
                 float4 _MainTex_ST;
                 TEXTURE2D(_TrailTexture);
                 float _DepthAmount;
-                float _ReSampleOffset;
+                float _LightPow;
                 float _BlurWidth;
                 float _TessFactor;
                 SamplerState sampler_linear_repeat;
@@ -89,10 +89,12 @@ Shader "TrailByShaderGraph"
             };
 
 
-            float3 CalcuateHeight(float2 uv)
+            // RenderTextureから高さを求める
+            float3 CalcHeight(float2 uv)
             {
                 float3 mainTrail;
 
+                // 隣接も影響させる
                 for(int i = -1; i <= 1; i++)
                 {
                     for(int j = -1; j <= 1; j++)
@@ -176,22 +178,17 @@ Shader "TrailByShaderGraph"
                 bary.z * input[2].tangentOS);
 
                 float3 depth = float3(0, _DepthAmount, 0);
-                float3 multied = CalcuateHeight(output.uv) * depth;
+                float3 multied = CalcHeight(output.uv) * depth;
 
-                // ----------------- copied from vertex shader -------------------
-                // get vectors in the world coordinate
                 VertexPositionInputs vertexInput = GetVertexPositionInputs(positionOS + multied);
                 VertexNormalInputs vertexNormalInput = GetVertexNormalInputs(normalOS, tangentOS);
 
                 output.positionCS = TransformWorldToHClip(vertexInput.positionWS);
 
-                // Get Main Light
                 Light mainLight = GetMainLight();
 
-                // world to tangent
                 float3x3 tangentMat = float3x3(vertexNormalInput.tangentWS, vertexNormalInput.bitangentWS, vertexNormalInput.normalWS);
                 output.lightTS = mul(tangentMat, mainLight.direction);;
-                // ----------------- copied from vertex shader END-------------------
 
                 return output;
             }
@@ -200,9 +197,8 @@ Shader "TrailByShaderGraph"
             {
                 float3 normalByTex = UnpackNormal(tex2D(_NormalTexture, IN.uv));
                 float diff = 1 - saturate(dot(normalByTex, IN.lightTS));
-                // ここなのは確実
                 half4 col = tex2D(_MainTex, IN.uv);
-                diff = lerp(1, diff, _ReSampleOffset);
+                diff = lerp(1, diff, _LightPow);
                 col.rgb *= diff;
                 return col;
             }
