@@ -9,6 +9,7 @@ Shader "TrailByShaderGraph"
         _LightPow ("LightPow", Range(0, 1)) = 0
         _BlurWidth ("_BlurWidth", float) = 0.01
         _TessFactor ("Tessellation", Range(1, 50)) = 10
+        _Color ("Color", Color) = (0,0,0,1)
     }
     SubShader
     {
@@ -48,6 +49,7 @@ Shader "TrailByShaderGraph"
                 SAMPLER(SamplerState_Linear_Repeat);
                 float4 _TrailTexture_ST;
                 sampler2D _NormalTexture;
+                half4 _Color;
             CBUFFER_END
 
             struct VSInput
@@ -197,7 +199,7 @@ Shader "TrailByShaderGraph"
             {
                 float3 normalByTex = UnpackNormal(tex2D(_NormalTexture, IN.uv));
                 float diff = 1 - saturate(dot(normalByTex, IN.lightTS));
-                half4 col = tex2D(_MainTex, IN.uv);
+                half4 col = tex2D(_MainTex, IN.uv) + _Color;
                 diff = lerp(1, diff, _LightPow);
                 col.rgb *= diff;
                 return col;

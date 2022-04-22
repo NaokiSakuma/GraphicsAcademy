@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 26a0dfdea3e2a466d97d51af0372a6c5, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1213df736d965458e9f4237c77f14b85, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalTexture:
@@ -35,8 +35,10 @@ Material:
     m_Floats:
     - _BlurWidth: 0
     - _DepthAmount: -0.51
+    - _LightPow: 0.298
     - _ReSampleOffset: 0.34
     - _TessFactor: 5.2
     - _Tessellation: 4
-    m_Colors: []
+    m_Colors:
+    - _Color: {r: 0.4339623, g: 0.4339623, b: 0.4339623, a: 0}
   m_BuildTextureStacks: []
