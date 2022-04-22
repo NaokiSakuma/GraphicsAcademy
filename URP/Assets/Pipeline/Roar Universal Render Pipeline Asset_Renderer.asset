@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ZoomBlurRenderFeature
   m_EditorClassIdentifier: 
   m_Active: 1
+  shader: {fileID: 4800000, guid: 11d4d82d0de7e4b1291cc370468bbb7c, type: 3}
 --- !u!114 &-4909671737864946289
 MonoBehaviour:
   m_ObjectHideFlags: 0
