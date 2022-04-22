@@ -91,7 +91,7 @@ MonoBehaviour:
   active: 1
   focusPower:
     m_OverrideState: 1
-    m_Value: 45
+    m_Value: 100
   focusDetail:
     m_OverrideState: 1
     m_Value: 5
