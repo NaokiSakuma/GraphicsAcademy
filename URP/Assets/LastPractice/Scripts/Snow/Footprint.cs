@@ -17,9 +17,15 @@ namespace SnowScene.Snow
 
         public Material mat;
 
+        public Material pileMat;
+
         // mouse debug draw
         private Vector3 _prevMousePosition;
         private bool _mouseDrag = false;
+
+        private Color[] buffer;
+
+        public Rect debugRect;
 
         void Awake()
         {
@@ -55,6 +61,10 @@ namespace SnowScene.Snow
         /// <param name="alpha"></param>
         void DrawAt(float x, float y, float alpha)
         {
+            // var tmp = RenderTexture.GetTemporary(rtWidth, rtHeight);
+            // Graphics.Blit(targetTexture, tmp);
+            //Graphics.Blit(tmp, targetTexture);
+
             Graphics.Blit(targetTexture, auxTexture);
 
             // activate our render texture
@@ -88,11 +98,24 @@ namespace SnowScene.Snow
 
             // Draw the texture
             Graphics.DrawTexture(screenRect, stampTexture, mat);
+            //
+            // var scRect = new Rect
+            // {
+            //     x = 0,
+            //     y = 0,
+            //     width = targetTexture.width,
+            //     height = targetTexture.height,
+            // };
+            //
+            //
+            // Graphics.DrawTexture(scRect, texture, pileMat);
 
             GL.PopMatrix();
             RenderTexture.active = null;
 
+            // RenderTexture.ReleaseTemporary(tmp);
 
+            // Graphics.Blit(auxTexture, targetTexture, pileMat);
         }
     }
 }

@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Footprint
+  m_Name: Footprint 1
   m_Shader: {fileID: 4800000, guid: 27adcc6f60e754cda832b90300f6a4b2, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -24,7 +24,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _IndentMap:
-        m_Texture: {fileID: 8400000, guid: 0c4342ef03b61e64da1efb005c607284, type: 2}
+        m_Texture: {fileID: 8400000, guid: 6c3c030f2030b42eaa8b623e4af1e7d4, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -38,10 +38,10 @@ Material:
     m_Ints: []
     m_Floats:
     - _Displacement: 0.3
-    - _IndentDepth: 0.0053
+    - _IndentDepth: 0.1
     - _MaxDist: 25
     - _MinDist: 10
-    - _TessFactor: 6.7
+    - _TessFactor: 2
     - _Tessellation: 3
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}

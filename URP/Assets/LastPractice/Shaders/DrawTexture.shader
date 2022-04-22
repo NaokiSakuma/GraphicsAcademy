@@ -3,6 +3,7 @@ Shader "SnowScene/DrawTexture"
     Properties
     {
         _MainTex ("MainTex", 2D) = "white" {}
+        // _StampTex ("StampTex", 2D) = "white" {}
     }
     SubShader
     {
@@ -30,6 +31,7 @@ Shader "SnowScene/DrawTexture"
             CBUFFER_START(UnityPerMaterial)
                 sampler2D _MainTex;
                 float4 _MainTex_ST;
+                // sampler2D _StampTex;
             CBUFFER_END
 
             struct Attributes
@@ -54,6 +56,7 @@ Shader "SnowScene/DrawTexture"
 
             half4 frag(Varyings IN) :SV_TARGET
             {
+                // return half4(0,0,0,1);
                 half4 col = tex2D(_MainTex, IN.uv);
                 return col;
             }
