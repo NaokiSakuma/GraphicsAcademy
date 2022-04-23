@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 41502b78ea4ec4739b095dbd6e960828, type: 3}
-  m_Name: ZoomBlurRenderFeature
+  m_Name: RoarBlurRenderFeature
   m_EditorClassIdentifier: 
   m_Active: 1
   shader: {fileID: 4800000, guid: 11d4d82d0de7e4b1291cc370468bbb7c, type: 3}
